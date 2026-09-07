@@ -1,0 +1,8 @@
+{
+  "name": "Maths Lycée - Seconde, 1ère, Terminale",
+  "description": "Application complète de mathématiques pour le lycée : programme officiel, cours, exercices interactifs corrigés, flashcards, tuteur IA et mode hors-ligne.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
