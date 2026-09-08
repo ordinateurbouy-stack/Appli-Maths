@@ -1,11 +1,5 @@
-import express from "express";
-import dotenv from "dotenv";
-import { apiRouter } from "../server/apiRoutes";
-
-dotenv.config();
-
-const app = express();
-app.use(express.json({ limit: "5mb" }));
-app.use(apiRouter);
-
-export default app;
+export default async function handler(req: any, res: any) {
+  res.statusCode = 200;
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify({ status: "ok", message: "API Maths Lycée opérationnelle sur Vercel" }));
+}
