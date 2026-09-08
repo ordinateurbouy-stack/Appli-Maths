@@ -69,12 +69,12 @@ async function generateWithFallback(
 }
 
 // Health check handler
-const handleHealth = (req: Request, res: Response) => {
+export const handleHealth = (req: Request, res: Response) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 };
 
 // Chat handler
-const handleChat = async (req: Request, res: Response) => {
+export const handleChat = async (req: Request, res: Response) => {
   try {
     const { message, level, chapter, history } = req.body;
 
@@ -166,7 +166,7 @@ RÈGLES DE RÉDACTION ET NOTATION :
 };
 
 // Generate exercises handler
-const handleGenerateExercise = async (req: Request, res: Response) => {
+export const handleGenerateExercise = async (req: Request, res: Response) => {
   try {
     const { chapterId, chapterTitle, level, domain, difficulty, topicHint, count } = req.body;
     const numToGenerate = Math.min(Math.max(Number(count) || 1, 1), 3);

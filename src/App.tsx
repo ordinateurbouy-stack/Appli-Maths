@@ -184,13 +184,37 @@ export default function App() {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Erreur de réponse du serveur');
+      let data: any = null;
+      try {
+        data = await response.json();
+      } catch {
+        // Response was not JSON
       }
 
-      const data = await response.json();
+      if (!response.ok) {
+        if (data?.answer) {
+          setProgress((prev) =>
+            addChatMessage(prev, {
+              role: 'assistant',
+              content: data.answer,
+            })
+          );
+          return;
+        }
+
+        if (response.status === 404) {
+          throw new Error("L'endpoint /api/chat est introuvable (Erreur 404). Vérifiez la configuration Vercel.");
+        }
+
+        if (response.status === 503 || data?.error?.includes('GEMINI_API_KEY')) {
+          throw new Error("La clé GEMINI_API_KEY n'est pas encore configurée dans les paramètres de votre projet Vercel (Settings > Environment Variables).");
+        }
+
+        throw new Error(data?.error || `Erreur du serveur (${response.status})`);
+      }
+
       const reply =
-        data.reply ||
+        data?.reply ||
         'Désolé, je n\'ai pas pu traiter votre demande pour le moment. Veuillez réessayer.';
 
       // 2. Add assistant message locally
@@ -200,13 +224,17 @@ export default function App() {
           content: reply,
         })
       );
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur API Chat:', error);
+      const errorMessage =
+        error?.message && !error.message.includes('Failed to fetch')
+          ? error.message
+          : 'Une erreur est survenue lors de la communication avec le tuteur. Vérifiez que la variable GEMINI_API_KEY est bien configurée sur Vercel et que votre connexion internet est active.';
+
       setProgress((prev) =>
         addChatMessage(prev, {
           role: 'assistant',
-          content:
-            'Une erreur est survenue lors de la communication avec le tuteur. Vérifiez votre connexion internet si vous êtes hors-ligne.',
+          content: errorMessage,
         })
       );
     }
